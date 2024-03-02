@@ -1,0 +1,67 @@
+"""
+===============================================================================
+ENGR 13000 Fall 2022
+
+Program Description
+   Code models a scooter that has a snow transportation device attached.
+
+Assignment Information
+    Assignment:     Project 3
+    Author:         David Hudson, hudso166@purdue.edu
+    Team ID:        LC1 - 19 (e.g. LC1 - 01; for section LC1, team 01)
+
+Contributor:    Braden Sanchez, sanch367@purdue.edu
+                Paulo Ramirez, ramir378@purdue.edu
+                Josh Hirchak, jhircha@purdue.edu [repeat for each]
+    My contributor(s) helped me:
+    [X] understand the assignment expectations without
+        telling me how they will approach it.
+    [X] understand different ways to think about a solution
+        without helping me plan my solution.
+    [X] think through the meaning of a specific error or
+        bug present in my code without looking at my code.
+    Note that if you helped somebody else with their code, you
+    have to list that person as a contributor here as well.
+    
+ACADEMIC INTEGRITY STATEMENT
+I have not used source code obtained from any other unauthorized
+source, either modified or unmodified. Neither have I provided
+access to my code to another. The project I am submitting
+is my own original work.
+===============================================================================
+"""
+
+from microbit import *
+import robotbit_library as r
+import radio
+import sled_toggle
+chnl = 19 #change channel to your team number
+# Define Ports for the bank of high current output
+M1A = 0x1
+M1B = 0x2
+M2A = 0x3
+M2B = 0x4
+r.setup()
+
+radio.config(channel=chnl)
+radio.on()
+
+#function to move wheels of scooter
+def Drive(lft,rgt):
+    r.motor(M2B, lft)
+    r.motor(M1A, rgt)
+
+isDown = False; #initializing position of sled
+while True:
+    isDown = sled_toggle.see_snow(isDown) #calls function to determine whether sled should be up or down
+    s = radio.receive()
+    if s is not None: #moves scooter in direction controller tells it to move
+        if s=="N":
+            Drive(-50,50)
+            display.show(Image.ARROW_E)
+        elif s=="S":
+            Drive(50,-50)
+            display.show(Image.ARROW_W)
+    else:
+        Drive(0,0)
+    sleep(20)
